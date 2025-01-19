@@ -5,13 +5,8 @@
     const wordList = words.getMostPopular(3000)
     let specialChars = ["?", "\\", "/", "!", "\"", "$", ".", ",", "#", "*", "+", "-"];
 
-    import {writable} from 'svelte/store';
-
-    import eye from '$lib/images/eye.png';
-
-    // Reactive store for the password
-    let password = writable('Password Here!');
-    let passHidden = writable('**************');
+    // Reactive state for the password
+    let password = $state('Password Here!');
 
     function getRanChar() {
         let char = Math.floor(Math.random() * specialChars.length);
@@ -40,30 +35,17 @@
         let specialChar2 = getRanChar();
         let dice = Math.random() < 0.5;
 
-        let newPassword =
-            dice
-                ? word1 + word2 + word3 + number1 + number2 + specialChar
-                : specialChar2 + word1 + word2 + word3 + number1 + number2 + specialChar;
-
-        password.set(newPassword);
-        passHidden.set('*'.repeat(newPassword.length));
+        password = dice
+          ? word1 + word2 + word3 + number1 + number2 + specialChar
+          : specialChar2 + word1 + word2 + word3 + number1 + number2 + specialChar
     }
-
-    function copyToClipboard() {
-        password.subscribe((val) => navigator.clipboard.writeText(val));
-    }
-
-    let showPassword = true;
 </script>
 
 <h1>Password Generator</h1>
-<button id="gen" on:click={changetext}>Generate!</button>
-<div id="text">{showPassword ? $password : $passHidden}</div>
+<button id="gen" onclick={changetext}>Generate!</button>
+<div id="text">{password}</div>
 <div class="res">
-    <button id="copy" class="button-symbol" on:click={copyToClipboard}>
-        <img class="img-small" src="https://cdn-icons-png.flaticon.com/512/54/54702.png"alt="Copy">
+    <button id="copy" class="button-symbol" onclick={() => navigator.clipboard.writeText(password)}>
+        <img class="img-small" src="https://cdn-icons-png.flaticon.com/512/54/54702.png" alt="Copy">
     </button>
-   <!-- <button id="see" class="button-symbol" on:click={() => (showPassword = !showPassword)}>
-        <img class="img-small" src="{eye}"  alt="Toggle">
-    </button>-->
 </div>
